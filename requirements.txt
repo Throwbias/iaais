@@ -1,0 +1,16 @@
+jupyter
+ipykernel
+scikit-learn
+numpy
+pandas
+matplotlib
+seaborn
+networkx
+spacy
+nltk
+transformers
+torch
+openai
+streamlit
+python-dotenv
+pytest
