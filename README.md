@@ -20,7 +20,6 @@ cd ~/projects/iaais
 source iaais_env/bin/activate
 ```
 
-The project is intentionally independent of the MIPDS project and its environment.
 
 ## Dependencies
 
