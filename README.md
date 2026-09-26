@@ -15,11 +15,12 @@ IAAIS is a CSC5350 course project exploring an intelligent adaptive AI system. T
 ## Current implementation status
 
 The repository began as an environment scaffold. The implemented course
-components currently reach Chapter 5: the Chapter 2 Search Engine in
+components currently reach Chapter 6: the Chapter 2 Search Engine in
 `src/iaais/search_engine/`, the Chapter 3 Knowledge Base in
 `src/iaais/knowledge_base/`, the Chapter 4 Planner in
-`src/iaais/planner/`, and the Chapter 5 Uncertainty Module in
-`src/iaais/uncertainty/`.
+`src/iaais/planner/`, the Chapter 5 Uncertainty Module in
+`src/iaais/uncertainty/`, and the Chapter 6 Classifier in
+`src/iaais/classifier/`.
 
 The Search Engine exposes a uniform problem interface:
 
@@ -123,6 +124,42 @@ Run `notebooks/04_uncertainty.ipynb` for the categorical, sensor, planning, and
 calibration demonstrations. Tests are in `tests/test_uncertainty.py`,
 `tests/test_uncertainty_particle_filter.py`, and
 `tests/test_uncertainty_knowledge_base.py`.
+
+### Classifier — Chapter 6
+
+The first supervised task is one exercise/rest label per accelerometer and
+gyroscope window. `InertialFeatureEngineer` creates per-axis and vector
+magnitude summaries, signal magnitude area, sample rate, duration, and an
+optional sensor-profile category. The feature facts are stored as
+`sensor_feature(window_id, feature_name, value)` records. The feature extractor
+can also read configured fact predicates and statuses from the Knowledge Base.
+
+`Classifier` trains a regularized multiclass logistic-regression model on
+explicitly supplied labeled examples or on feature facts paired with confirmed
+`exercise_label` facts. Class-weighted training addresses class imbalance.
+Macro-F1 is the primary holdout metric because it gives each exercise class
+equal weight; accuracy, balanced accuracy, per-class precision and recall, and
+a confusion matrix are reported alongside it. The logistic model itself
+optimizes class-weighted log loss; macro-F1 is the primary evaluation metric
+for future model selection, and no tuning search is claimed yet. Holdout
+examples can include recording group IDs, and evaluation rejects overlap with
+training groups to reduce window leakage.
+
+Predictions include the complete model probability distribution, a ranked
+linear feature-contribution explanation, and a configurable review flag
+(initial threshold 0.60). A prediction written to the Knowledge Base remains
+`PROPOSED`: the top label is an `exercise_prediction` fact, and each class
+probability is a separate `exercise_class_probability` fact. Both retain
+timestamps and feature-fact provenance. If supplied, the Uncertainty Module
+receives the full distribution as the current belief. These probabilities are
+model estimates, not claimed to be calibrated: there is no labeled project
+dataset in this repository yet, so no model performance or calibration result
+is reported. The threshold is an initial review policy that should be set using
+held-out data. The linear contributions explain model scores, not causation.
+
+Run `notebooks/05_classifier.ipynb` for feature engineering, a clearly
+illustrative toy training set, holdout evaluation, and the Knowledge Base and
+Uncertainty Module handoff. Tests are in `tests/test_classifier.py`.
 
 ## WSL setup
 
