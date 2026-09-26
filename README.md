@@ -6,6 +6,7 @@ IAAIS is a CSC5350 course project exploring an intelligent adaptive AI system. T
 
 - Symbolic reasoning and knowledge representation
 - Search and planning methods
+- Probabilistic reasoning over uncertain sensor and classifier evidence
 - Machine learning for sensor-based exercise recognition
 - Natural language processing for workout interaction and review
 - Generative AI features for adaptive assistance
@@ -14,10 +15,11 @@ IAAIS is a CSC5350 course project exploring an intelligent adaptive AI system. T
 ## Current implementation status
 
 The repository began as an environment scaffold. The implemented course
-components currently reach Chapter 4: the Chapter 2 Search Engine in
+components currently reach Chapter 5: the Chapter 2 Search Engine in
 `src/iaais/search_engine/`, the Chapter 3 Knowledge Base in
-`src/iaais/knowledge_base/`, and the Chapter 4 Planner in
-`src/iaais/planner/`.
+`src/iaais/knowledge_base/`, the Chapter 4 Planner in
+`src/iaais/planner/`, and the Chapter 5 Uncertainty Module in
+`src/iaais/uncertainty/`.
 
 The Search Engine exposes a uniform problem interface:
 
@@ -101,6 +103,26 @@ outcomes.
 
 Run `notebooks/03_planner.ipynb` for both demonstrations. Tests are in
 `tests/test_planner.py` and `tests/test_planner_mdp.py`.
+
+### Uncertainty Module — Chapter 5
+
+The Uncertainty Module keeps probability distributions and evidence histories
+separate from deterministic Knowledge Base facts. Categorical observations use
+exact Bayes updates; confirmed Knowledge Base facts can condition a belief,
+while proposed, unknown, and conflicted evidence is not silently promoted to
+certainty. Classifier predictions retain their full distribution.
+
+`UncertaintyModule.expected_utility` supplies expected values to a planner by
+weighting each outcome by its posterior probability. A bootstrap particle
+filter handles noisy continuous measurements and vector-valued states. Reports
+include the full posterior, entropy, information gained from modeled evidence,
+source records, and optional Brier, log-loss, and expected calibration error
+metrics when labeled outcomes are available.
+
+Run `notebooks/04_uncertainty.ipynb` for the categorical, sensor, planning, and
+calibration demonstrations. Tests are in `tests/test_uncertainty.py`,
+`tests/test_uncertainty_particle_filter.py`, and
+`tests/test_uncertainty_knowledge_base.py`.
 
 ## WSL setup
 

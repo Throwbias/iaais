@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Callable, Hashable, Iterable
 
+from ..uncertainty import ProbabilityDistribution, expected_utility
 from .models import MDPResult, StochasticAction
 
 
@@ -104,8 +105,11 @@ class ValueIterationPlanner:
         return tuple(actions)
 
     def _action_value(self, action: StochasticAction, values: dict[Hashable, float]) -> float:
-        return sum(
-            outcome.probability
-            * (outcome.reward + self.discount * values.get(outcome.next_state, 0.0))
-            for outcome in action.outcomes
+        probabilities = ProbabilityDistribution(
+            {index: outcome.probability for index, outcome in enumerate(action.outcomes)}
         )
+        utilities = {
+            index: outcome.reward + self.discount * values.get(outcome.next_state, 0.0)
+            for index, outcome in enumerate(action.outcomes)
+        }
+        return expected_utility(probabilities, utilities)
